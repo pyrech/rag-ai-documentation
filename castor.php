@@ -87,16 +87,16 @@ function install(): void
 #[AsTask(description: 'Clear the application cache', namespace: 'app', aliases: ['cache-clear'])]
 function cache_clear(): void
 {
-    // io()->title('Clearing the application cache');
+    io()->title('Clearing the application cache');
 
-    // docker_compose_run('rm -rf var/cache/ && bin/console cache:warmup');
+    docker_compose_run('rm -rf var/cache/ && bin/console cache:warmup');
 }
 
 #[AsTask(description: 'Migrates database schema', namespace: 'app:db', aliases: ['migrate'])]
 function migrate(): void
 {
-    // io()->title('Migrating the database schema');
+    io()->title('Migrating the database schema');
 
-    // docker_compose_run('bin/console doctrine:database:create --if-not-exists');
-    // docker_compose_run('bin/console doctrine:migration:migrate -n --allow-no-migration --all-or-nothing');
+    docker_compose_run('bin/console doctrine:database:create --if-not-exists');
+    docker_compose_run('bin/console doctrine:migration:migrate -n --allow-no-migration --all-or-nothing');
 }

@@ -10,14 +10,13 @@ class Section
     public function __construct(
         #[ORM\Id]
         #[ORM\GeneratedValue(strategy: 'NONE')]
+        #[ORM\Column(type: 'string', nullable: false)]
         public readonly string $id,
-        #[ORM\Column]
-        public readonly ?string $originalSourceId,
-        #[ORM\Column]
+        #[ORM\Column(type: 'text')]
         public readonly string $url,
-        #[ORM\Column]
+        #[ORM\Column(type: 'text')]
         public readonly string $title,
-        #[ORM\Column]
+        #[ORM\Column(type: 'text')]
         public readonly string $content,
     ) {
     }

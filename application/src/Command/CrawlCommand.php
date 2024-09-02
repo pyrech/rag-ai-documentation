@@ -3,11 +3,12 @@
 namespace App\Command;
 
 use App\Crawl\Crawler;
+use App\Entity\Section;
+use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
-use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
 
@@ -19,6 +20,7 @@ class CrawlCommand extends Command
 {
     public function __construct(
         private readonly Crawler $crawler,
+        private readonly EntityManagerInterface $entityManager,
     ) {
         parent::__construct();
     }
@@ -35,7 +37,38 @@ class CrawlCommand extends Command
         $io = new SymfonyStyle($input, $output);
         $url = $input->getArgument('url');
 
-        $this->crawler->crawl($url);
+        if (false === filter_var($url, \FILTER_VALIDATE_URL)) {
+            $io->error('Invalid url.');
+
+            return Command::FAILURE;
+        }
+
+        $host = parse_url($url, \PHP_URL_HOST);
+
+        $io->info('Removing data for this domain.');
+
+        $count = $this->entityManager->createQuery(sprintf('DELETE FROM %s s WHERE s.url LIKE :host', Section::class))
+            ->setParameter('host', "%s://{$host}%")
+            ->execute()
+        ;
+
+        $this->entityManager->flush();
+
+        $io->note(sprintf('Removed %d sections.', $count));
+
+        $io->info('Crawling the website.');
+
+        $sections = $this->crawler->crawl($url);
+
+        $io->note(sprintf('Found %d sections.', \count($sections)));
+
+        $io->info('Persisting data.');
+
+        foreach ($sections as $section) {
+            $this->entityManager->persist($section);
+        }
+
+        $this->entityManager->flush();
 
         $io->success('Finished crawling this website.');
 

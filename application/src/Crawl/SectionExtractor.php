@@ -30,11 +30,9 @@ class SectionExtractor
         /** @var \DOMElement $node */
         foreach ($nodes as $node) {
             $documentUrl = $url;
-            $originalSourceId = null;
 
             if ($node->hasAttribute('id')) {
                 $documentUrl .= '#' . $node->getAttribute('id');
-                $originalSourceId = $node->getAttribute('id');
             }
             $content = '';
             $contentNode = $node->nextSibling;
@@ -44,11 +42,12 @@ class SectionExtractor
                 $contentNode = $contentNode->nextSibling;
             }
 
+            $title = $this->cleanContent($node->textContent);
+
             $sections[] = new Section(
-                hash('xxh3', $documentUrl),
-                $originalSourceId,
+                hash('xxh3', $url . $title),
                 $documentUrl,
-                $this->cleanContent($node->textContent),
+                $title,
                 $this->cleanContent($content),
             );
         }

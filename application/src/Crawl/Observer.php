@@ -64,6 +64,5 @@ class Observer extends CrawlObserver implements ResetInterface
 
     public function finishedCrawling(): void
     {
-
     }
 }
