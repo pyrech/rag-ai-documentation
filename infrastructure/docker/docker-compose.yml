@@ -43,6 +43,8 @@ services:
             - POSTGRES_PASSWORD=app
         volumes:
             - postgres-data:/var/lib/postgresql/data
+        ports:
+            -   "5432:5432"
         healthcheck:
             test: ["CMD-SHELL", "pg_isready -U postgres"]
             interval: 5s

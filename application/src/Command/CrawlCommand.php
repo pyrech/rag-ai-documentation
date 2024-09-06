@@ -4,6 +4,7 @@ namespace App\Command;
 
 use App\Crawl\Crawler;
 use App\Entity\Section;
+use App\OpenAI\Client;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
@@ -20,6 +21,7 @@ class CrawlCommand extends Command
 {
     public function __construct(
         private readonly Crawler $crawler,
+        private readonly Client $client,
         private readonly EntityManagerInterface $entityManager,
     ) {
         parent::__construct();
@@ -61,6 +63,14 @@ class CrawlCommand extends Command
         $sections = $this->crawler->crawl($url);
 
         $io->note(sprintf('Found %d sections.', \count($sections)));
+
+        $io->info('Extracting embeddings.');
+
+        foreach ($sections as $section) {
+            $embeddings = $this->client->getEmbeddings($section->content);
+
+            $section->setEmbeddings($embeddings);
+        }
 
         $io->info('Persisting data.');
 
