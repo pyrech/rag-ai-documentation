@@ -1,2 +1,5 @@
-.castor.stub.php
+/.castor.stub.php
+/infrastructure/docker/docker-compose.override.yml
+/infrastructure/docker/services/router/certs/*.pem
+
 .php-cs-fixer.cache

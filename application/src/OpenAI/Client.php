@@ -2,6 +2,7 @@
 
 namespace App\OpenAI;
 
+use App\Entity\Section;
 use Psr\Cache\CacheItemPoolInterface;
 use Symfony\Component\DependencyInjection\Attribute\Autowire;
 use Symfony\Contracts\HttpClient\HttpClientInterface;
@@ -23,17 +24,10 @@ class Client
         $cacheItem = $this->cache->getItem($cacheKey);
 
         if (!$cacheItem->isHit()) {
-            $response = $this->client->request('POST', 'https://api.openai.com/v1/embeddings', [
-                'headers' => [
-                    'Authorization' => "Bearer {$this->apiKey}",
-                ],
-                'json' => [
-                    'model' => 'text-embedding-3-small', // "small" model will produce vectors of 1536 dimensions
-                    'input' => $content,
-                ],
+            $data = $this->call('/v1/embeddings', [
+                'model' => 'text-embedding-3-small', // "small" model will produce vectors of 1536 dimensions
+                'input' => $content,
             ]);
-
-            $data = $response->toArray();
 
             $cacheItem->set($data);
             $this->cache->save($cacheItem);
@@ -46,5 +40,60 @@ class Client
         }
 
         return $data['data'][0]['embedding'];
+    }
+
+    /**
+     * @param Section[] $sections
+     */
+    public function getSuggestions(array $sections, string $input): string
+    {
+        $prompt = 'You are a friendly chatbot. \
+    You respond in a concise, technically credible tone. \
+    You only use information from the provided information.';
+
+        $messages = [
+            [
+                'role' => 'system',
+                'content' => $prompt,
+            ],
+        ];
+
+        $messages[] = [
+            'role' => 'user',
+            'content' => $input,
+        ];
+
+        $relevantInformation = 'Relevant information: \n';
+        foreach ($sections as $section) {
+            $relevantInformation .= "{$section->title} - {$section->content} \n";
+        }
+
+        $messages[] = [
+            'role' => 'assistant',
+            'content' => $relevantInformation,
+        ];
+
+        $data = $this->call('/v1/chat/completions', [
+            'model' => 'gpt-4o',
+            'messages' => $messages,
+        ]);
+
+        if (!$data['choices'][0]['message']['content'] ?? false) {
+            throw new \RuntimeException('Could not get suggestion from OpenAI response.');
+        }
+
+        return $data['choices'][0]['message']['content'];
+    }
+
+    private function call(string $endpoint, array $data): array
+    {
+        $response = $this->client->request('POST', "https://api.openai.com{$endpoint}", [
+            'headers' => [
+                'Authorization' => "Bearer {$this->apiKey}",
+            ],
+            'json' => $data,
+        ]);
+
+        return $response->toArray();
     }
 }

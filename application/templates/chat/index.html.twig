@@ -1,0 +1,20 @@
+{% extends 'base.html.twig' %}
+
+{% block body %}
+
+    <h1>AI documentation</h1>
+
+    <p>You can chat with an AI about your documentation:</p>
+
+    {{ form_start(form) }}
+        {{ form_row(form.input) }}
+        <button type="submit">Send</button>
+    {{ form_end(form) }}
+
+    {% if suggestions %}
+        <h2>Response</h2>
+        <pre>
+            {{ suggestions }}
+        </pre>
+    {% endif %}
+{% endblock %}

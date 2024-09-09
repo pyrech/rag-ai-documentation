@@ -22,7 +22,7 @@ import(__DIR__ . '/.castor');
  */
 function create_default_variables(): array
 {
-    $projectName = 'app';
+    $projectName = 'ai-documentation';
     $tld = 'test';
 
     return [

@@ -2,9 +2,10 @@
 
 namespace App\Entity;
 
+use App\Repository\SectionRepository;
 use Doctrine\ORM\Mapping as ORM;
 
-#[ORM\Entity]
+#[ORM\Entity(repositoryClass: SectionRepository::class)]
 class Section
 {
     public const VECTOR_LENGTH = 1536;
