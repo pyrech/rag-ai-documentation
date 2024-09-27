@@ -17,6 +17,8 @@ class SectionRepository extends ServiceEntityRepository
     }
 
     /**
+     * @param float[] $embeddings
+     *
      * @return Section[]
      */
     public function findNearest(array $embeddings): array

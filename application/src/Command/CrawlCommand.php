@@ -8,14 +8,14 @@ use App\OpenAI\Client;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
-use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
+use Symfony\Component\DependencyInjection\Attribute\Autowire;
 
 #[AsCommand(
     name: 'app:crawl',
-    description: 'Crawl the given website to extract content',
+    description: 'Crawl the website to extract content',
 )]
 class CrawlCommand extends Command
 {
@@ -23,21 +23,16 @@ class CrawlCommand extends Command
         private readonly Crawler $crawler,
         private readonly Client $client,
         private readonly EntityManagerInterface $entityManager,
+        #[Autowire('%env(DOCUMENTATION_URL)%')]
+        private readonly string $documentationUrl,
     ) {
         parent::__construct();
-    }
-
-    protected function configure(): void
-    {
-        $this
-            ->addArgument('url', InputArgument::OPTIONAL, 'Url to crawl')
-        ;
     }
 
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $io = new SymfonyStyle($input, $output);
-        $url = $input->getArgument('url');
+        $url = $this->documentationUrl;
 
         if (false === filter_var($url, \FILTER_VALIDATE_URL)) {
             $io->error('Invalid url.');

@@ -11,8 +11,11 @@
         "doctrine/doctrine-bundle": "^2.12",
         "doctrine/doctrine-migrations-bundle": "^3.3",
         "doctrine/orm": "^3.2",
+        "league/commonmark": "^2.5",
         "partitech/doctrine-pgvector": "^0.0.7",
         "spatie/crawler": "*",
+        "symfony/asset": "7.1.*",
+        "symfony/asset-mapper": "7.1.*",
         "symfony/console": "7.1.*",
         "symfony/css-selector": "7.1.*",
         "symfony/dom-crawler": "7.1.*",
@@ -23,11 +26,14 @@
         "symfony/framework-bundle": "7.1.*",
         "symfony/http-client": "7.1.*",
         "symfony/monolog-bundle": "^3.0",
+        "symfony/polyfill-uuid": "^1.31",
         "symfony/runtime": "7.1.*",
         "symfony/twig-bundle": "7.1.*",
+        "symfony/ux-live-component": "^2.20",
         "symfony/validator": "7.1.*",
         "symfony/yaml": "7.1.*",
         "twig/extra-bundle": "^2.12|^3.0",
+        "twig/intl-extra": "^3.12",
         "twig/twig": "^2.12|^3.0"
     },
     "require-dev": {
@@ -67,7 +73,8 @@
     "scripts": {
         "auto-scripts": {
             "cache:clear": "symfony-cmd",
-            "assets:install %PUBLIC_DIR%": "symfony-cmd"
+            "assets:install %PUBLIC_DIR%": "symfony-cmd",
+            "importmap:install": "symfony-cmd"
         },
         "post-install-cmd": [
             "@auto-scripts"

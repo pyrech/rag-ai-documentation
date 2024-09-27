@@ -1,20 +1,21 @@
 {% extends 'base.html.twig' %}
 
 {% block body %}
+    <div class="row g-0">
+        <div class="col-lg-4 align-content-center">
+            <div class="p-5 m-4 bg-body-tertiary rounded-3">
+                <div class="container">
+                    <h1 class="display-5 fw-bold">AI doc</h1>
+                    <p class="lead">
+                        Chatbot trained on <a href="{{ url }}" class="badge text-bg-primary link-underline-opacity-0">{{ url }}</a>,
+                        <br/>
+                        ask it anything about this website!</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-8">
+            <twig:Chat />
+        </div>
+    </div>
 
-    <h1>AI documentation</h1>
-
-    <p>You can chat with an AI about your documentation:</p>
-
-    {{ form_start(form) }}
-        {{ form_row(form.input) }}
-        <button type="submit">Send</button>
-    {{ form_end(form) }}
-
-    {% if suggestions %}
-        <h2>Response</h2>
-        <pre>
-            {{ suggestions }}
-        </pre>
-    {% endif %}
 {% endblock %}

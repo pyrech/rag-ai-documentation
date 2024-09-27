@@ -11,9 +11,10 @@ class Section
     public const VECTOR_LENGTH = 1536;
 
     #[ORM\Column(type: 'integer')]
-    public readonly int $tokens;
+    public int $tokens;
+    /** @var float[] */
     #[ORM\Column(type: 'vector', length: self::VECTOR_LENGTH)]
-    public readonly array $embeddings;
+    public array $embeddings;
 
     public function __construct(
         #[ORM\Id]
@@ -29,6 +30,9 @@ class Section
     ) {
     }
 
+    /**
+     * @param float[] $embeddings
+     */
     public function setEmbeddings(array $embeddings): void
     {
         $this->tokens = \count($embeddings);

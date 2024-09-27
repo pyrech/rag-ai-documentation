@@ -1,0 +1,38 @@
+<div class="m-5 chat card" {{ attributes }}>
+    <div class="chat-history">
+        <ul class="m-b-0">
+            {% for message in this.messages %}
+                <li class="clearfix">
+                    <div class="message {{ message.isMe ? 'my-message float-end' : 'other-message' }} pb-0">
+                        {{ message.content|markdown }}
+                    </div>
+                </li>
+            {% else %}
+                <li class="clearfix">
+                    <div class="message other-message">
+                        <i>Ask me anything... 🙂</i>
+                    </div>
+                </li>
+            {% endfor %}
+        </ul>
+    </div>
+    <div class="chat-message clearfix">
+        {{ form_start(form, {
+            attr: {
+                novalidate: true,
+                'data-action': 'live#action:prevent',
+                'data-live-action-param': 'submit',
+            }
+        }) }}
+
+            <div class="input-group mb-0">
+                <div class="input-group-prepend">
+                    <button type="submit" class="input-group-text h-100 {{ this.hasValidationErrors ? 'disabled' : '' }}">➤</button>
+                </div>
+
+                {{ form_widget(form.input) }}
+            </div>
+            {{ form_rest(form) }}
+        {{ form_end(form) }}
+    </div>
+</div>

@@ -17,6 +17,9 @@ class Client
     ) {
     }
 
+    /**
+     * @return array<float>
+     */
     public function getEmbeddings(string $content): array
     {
         $cacheKey = md5($content);
@@ -35,7 +38,7 @@ class Client
 
         $data = $cacheItem->get();
 
-        if (!$data['data'][0]['embedding'] ?? false) {
+        if (!($data['data'][0]['embedding'] ?? false)) {
             throw new \RuntimeException('Could not get embeddings from OpenAI response.');
         }
 
@@ -45,7 +48,7 @@ class Client
     /**
      * @param Section[] $sections
      */
-    public function getSuggestions(array $sections, string $input): string
+    public function getAnswer(array $sections, string $input): string
     {
         $prompt = 'You are a friendly chatbot. \
     You respond in a concise, technically credible tone. \
@@ -78,13 +81,18 @@ class Client
             'messages' => $messages,
         ]);
 
-        if (!$data['choices'][0]['message']['content'] ?? false) {
+        if (!($data['choices'][0]['message']['content'] ?? false)) {
             throw new \RuntimeException('Could not get suggestion from OpenAI response.');
         }
 
         return $data['choices'][0]['message']['content'];
     }
 
+    /**
+     * @param array<mixed> $data
+     *
+     * @return array<mixed>
+     */
     private function call(string $endpoint, array $data): array
     {
         $response = $this->client->request('POST', "https://api.openai.com{$endpoint}", [

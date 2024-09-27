@@ -22,3 +22,32 @@ services:
 
     # add more service definitions when explicit configuration is needed
     # please note that last definitions always *replace* previous ones
+
+    League\CommonMark\MarkdownConverter: ~
+    League\CommonMark\Extension\Attributes\AttributesExtension: ~
+    League\CommonMark\Extension\CommonMark\CommonMarkCoreExtension: ~
+    League\CommonMark\Extension\DefaultAttributes\DefaultAttributesExtension: ~
+    League\CommonMark\Extension\ExternalLink\ExternalLinkExtension: ~
+    League\CommonMark\Extension\GithubFlavoredMarkdownExtension: ~
+    League\CommonMark\Extension\HeadingPermalink\HeadingPermalinkExtension: ~
+    League\CommonMark\Environment\EnvironmentInterface:
+        alias: League\CommonMark\Environment\Environment
+    League\CommonMark\Environment\Environment:
+        arguments:
+            -
+                external_link:
+                    internal_hosts: ['%env(APP_DOMAIN)%']
+                    nofollow: 'external'
+                    noopener: 'external'
+                    noreferrer: 'external'
+                default_attributes:
+                    League\CommonMark\Extension\CommonMark\Node\Inline\Image:
+                        loading: 'lazy'
+                        decoding: 'async'
+        calls:
+            - addExtension: ['@League\CommonMark\Extension\Attributes\AttributesExtension']
+            - addExtension: ['@League\CommonMark\Extension\CommonMark\CommonMarkCoreExtension']
+            - addExtension: ['@League\CommonMark\Extension\DefaultAttributes\DefaultAttributesExtension']
+            - addExtension: ['@League\CommonMark\Extension\ExternalLink\ExternalLinkExtension']
+            - addExtension: ['@League\CommonMark\Extension\GithubFlavoredMarkdownExtension']
+
