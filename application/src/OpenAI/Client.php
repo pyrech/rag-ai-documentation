@@ -2,6 +2,7 @@
 
 namespace App\OpenAI;
 
+use App\Entity\Message;
 use App\Entity\Section;
 use Psr\Cache\CacheItemPoolInterface;
 use Symfony\Component\DependencyInjection\Attribute\Autowire;
@@ -47,8 +48,9 @@ class Client
 
     /**
      * @param Section[] $sections
+     * @param Message[] $historyMessages
      */
-    public function getAnswer(array $sections, string $input): string
+    public function getAnswer(array $sections, array $historyMessages): string
     {
         $prompt = 'You are a friendly chatbot. \
     You respond in a concise, technically credible tone. \
@@ -61,10 +63,12 @@ class Client
             ],
         ];
 
-        $messages[] = [
-            'role' => 'user',
-            'content' => $input,
-        ];
+        foreach ($historyMessages as $message) {
+            $messages[] = [
+                'role' => $message->isMe ? 'user' : 'assistant',
+                'content' => $message->content,
+            ];
+        }
 
         $relevantInformation = 'Relevant information: \n';
         foreach ($sections as $section) {

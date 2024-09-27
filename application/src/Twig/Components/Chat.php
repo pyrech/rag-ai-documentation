@@ -55,7 +55,8 @@ class Chat extends AbstractController
 
         $embeddings = $this->client->getEmbeddings($input);
         $sections = $this->sectionRepository->findNearest($embeddings);
-        $answer = $this->client->getAnswer($sections, $input);
+        $messages = $this->messageRepository->findLatest();
+        $answer = $this->client->getAnswer($sections, $messages);
 
         $message = new Message($answer, false);
         $this->entityManager->persist($message);
