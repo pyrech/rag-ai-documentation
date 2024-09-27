@@ -54,7 +54,8 @@ class Client
     {
         $prompt = 'You are a friendly chatbot. \
     You respond in a concise, technically credible tone. \
-    You only use information from the provided information.';
+    You only use information from the provided information. \
+    Please add the link of the relevant sections to the end of your response (do not invent url, only use the one we provided).';
 
         $messages = [
             [
@@ -63,22 +64,26 @@ class Client
             ],
         ];
 
+        $relevantInformation = 'Relevant information: \n';
+        foreach ($sections as $section) {
+            $relevantInformation .= json_encode([
+                    'title' => $section->title,
+                    'content' => $section->content,
+                    'url' => $section->url,
+                ]) . "\n";
+        }
+
+        $messages[] = [
+            'role' => 'system',
+            'content' => $relevantInformation,
+        ];
+
         foreach ($historyMessages as $message) {
             $messages[] = [
                 'role' => $message->isMe ? 'user' : 'assistant',
                 'content' => $message->content,
             ];
         }
-
-        $relevantInformation = 'Relevant information: \n';
-        foreach ($sections as $section) {
-            $relevantInformation .= "{$section->title} - {$section->content} \n";
-        }
-
-        $messages[] = [
-            'role' => 'assistant',
-            'content' => $relevantInformation,
-        ];
 
         $data = $this->call('/v1/chat/completions', [
             'model' => 'gpt-4o',
