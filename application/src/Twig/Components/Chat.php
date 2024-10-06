@@ -6,7 +6,7 @@ use App\Entity\Message;
 use App\Form\ChatMessageType;
 use App\OpenAI\Client;
 use App\Repository\MessageRepository;
-use App\Repository\SectionRepository;
+use App\Repository\DocumentRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Form\FormInterface;
@@ -24,7 +24,7 @@ class Chat extends AbstractController
     public function __construct(
         private readonly Client $client,
         private readonly MessageRepository $messageRepository,
-        private readonly SectionRepository $sectionRepository,
+        private readonly DocumentRepository $documentRepository,
         private readonly EntityManagerInterface $entityManager,
     ) {
     }
@@ -54,9 +54,9 @@ class Chat extends AbstractController
         $this->entityManager->flush();
 
         $embeddings = $this->client->getEmbeddings($input);
-        $sections = $this->sectionRepository->findNearest($embeddings);
+        $documents = $this->documentRepository->findNearest($embeddings);
         $messages = $this->messageRepository->findLatest();
-        $answer = $this->client->getAnswer($sections, $messages);
+        $answer = $this->client->getAnswer($documents, $messages);
 
         $message = new Message($answer, false);
         $this->entityManager->persist($message);

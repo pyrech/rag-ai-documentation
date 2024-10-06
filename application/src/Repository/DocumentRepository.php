@@ -2,24 +2,24 @@
 
 namespace App\Repository;
 
-use App\Entity\Section;
+use App\Entity\Document;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 
 /**
- * @extends ServiceEntityRepository<Section>
+ * @extends ServiceEntityRepository<Document>
  */
-class SectionRepository extends ServiceEntityRepository
+class DocumentRepository extends ServiceEntityRepository
 {
     public function __construct(ManagerRegistry $registry)
     {
-        parent::__construct($registry, Section::class);
+        parent::__construct($registry, Document::class);
     }
 
     /**
      * @param float[] $embeddings
      *
-     * @return Section[]
+     * @return Document[]
      */
     public function findNearest(array $embeddings): array
     {

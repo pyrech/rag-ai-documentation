@@ -2,11 +2,11 @@
 
 namespace App\Entity;
 
-use App\Repository\SectionRepository;
+use App\Repository\DocumentRepository;
 use Doctrine\ORM\Mapping as ORM;
 
-#[ORM\Entity(repositoryClass: SectionRepository::class)]
-class Section
+#[ORM\Entity(repositoryClass: DocumentRepository::class)]
+class Document
 {
     public const VECTOR_LENGTH = 1536;
 

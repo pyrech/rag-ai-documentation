@@ -2,13 +2,13 @@
 
 namespace App\Crawl;
 
-use App\Entity\Section;
+use App\Entity\Document;
 use Symfony\Component\DomCrawler\Crawler as DomCrawler;
 
-class SectionExtractor
+class DocumentExtractor
 {
     /**
-     * @return Section[]
+     * @return Document[]
      */
     public function extract(string $url, string $html): array
     {
@@ -17,11 +17,11 @@ class SectionExtractor
 
         // Iterate over the h1-h6 titles
         foreach ($crawler as $node) {
-            $sectionUrl = $url;
+            $documentUrl = $url;
 
             // Attach an anchor to the URL if title has an id
             if ($node instanceof \DOMElement && $node->hasAttribute('id')) {
-                $sectionUrl .= '#' . $node->getAttribute('id');
+                $documentUrl .= '#' . $node->getAttribute('id');
             }
 
             $title = $this->cleanContent($node->textContent);
@@ -34,14 +34,14 @@ class SectionExtractor
                 $contentNode = $contentNode->nextSibling;
             }
 
-            $sections[] = new Section(
-                $sectionUrl,
+            $documents[] = new Document(
+                $documentUrl,
                 $title,
                 $this->cleanContent($content),
             );
         }
 
-        return $sections;
+        return $documents;
     }
 
     private function isTitle(\DOMNode $node): bool

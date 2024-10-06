@@ -2,7 +2,7 @@
 
 namespace App\Crawl;
 
-use App\Entity\Section;
+use App\Entity\Document;
 use Spatie\Crawler\Crawler as SpatieCrawler;
 use Spatie\Crawler\CrawlProfiles\CrawlInternalUrls;
 
@@ -14,7 +14,7 @@ class Crawler
     }
 
     /**
-     * @return Section[]
+     * @return Document[]
      */
     public function crawl(string $url): array
     {
@@ -31,6 +31,6 @@ class Crawler
             ->startCrawling($url)
         ;
 
-        return $this->observer->getSections();
+        return $this->observer->getDocuments();
     }
 }

@@ -3,7 +3,7 @@
 namespace App\OpenAI;
 
 use App\Entity\Message;
-use App\Entity\Section;
+use App\Entity\Document;
 use Psr\Cache\CacheItemPoolInterface;
 use Symfony\Component\DependencyInjection\Attribute\Autowire;
 use Symfony\Contracts\HttpClient\HttpClientInterface;
@@ -47,15 +47,15 @@ class Client
     }
 
     /**
-     * @param Section[] $sections
+     * @param Document[] $documents
      * @param Message[] $historyMessages
      */
-    public function getAnswer(array $sections, array $historyMessages): string
+    public function getAnswer(array $documents, array $historyMessages): string
     {
         $prompt = 'You are a friendly chatbot. \
-    You respond in a concise, technically credible tone. \
+    You respond in a concise, technically credible tone (but do not hesitate to add examples if needed). \
     You only use information from the provided information. \
-    Please add the link of the relevant sections to the end of your response (do not invent url, only use the one we provided).';
+    Please add the link of the relevant documents to the end of your response (do not invent url, only use the one we provided).';
 
         $messages = [
             [
@@ -65,11 +65,11 @@ class Client
         ];
 
         $relevantInformation = 'Relevant information: \n';
-        foreach ($sections as $section) {
+        foreach ($documents as $document) {
             $relevantInformation .= json_encode([
-                    'title' => $section->title,
-                    'content' => $section->content,
-                    'url' => $section->url,
+                    'title' => $document->title,
+                    'content' => $document->content,
+                    'url' => $document->url,
                 ]) . "\n";
         }
 

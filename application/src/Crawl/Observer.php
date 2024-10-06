@@ -2,7 +2,7 @@
 
 namespace App\Crawl;
 
-use App\Entity\Section;
+use App\Entity\Document;
 use GuzzleHttp\Exception\RequestException;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\UriInterface;
@@ -12,26 +12,26 @@ use Symfony\Contracts\Service\ResetInterface;
 
 class Observer extends CrawlObserver implements ResetInterface
 {
-    /** @var Section[] */
-    private array $sections = [];
+    /** @var Document[] */
+    private array $documents = [];
 
     public function __construct(
-        private readonly SectionExtractor $extractor,
-        private readonly LoggerInterface $logger,
+        private readonly DocumentExtractor $extractor,
+        private readonly LoggerInterface   $logger,
     ) {
     }
 
     /**
-     * @return Section[]
+     * @return Document[]
      */
-    public function getSections(): array
+    public function getDocuments(): array
     {
-        return $this->sections;
+        return $this->documents;
     }
 
     public function reset()
     {
-        $this->sections = [];
+        $this->documents = [];
     }
 
     public function crawled(
@@ -47,7 +47,7 @@ class Observer extends CrawlObserver implements ResetInterface
         }
 
         $stringUrl = (string) $url;
-        $this->sections = array_merge($this->sections, $this->extractor->extract($stringUrl, $html));
+        $this->documents = array_merge($this->documents, $this->extractor->extract($stringUrl, $html));
     }
 
     public function crawlFailed(

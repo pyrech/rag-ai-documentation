@@ -3,7 +3,7 @@
 namespace App\Command;
 
 use App\Crawl\Crawler;
-use App\Entity\Section;
+use App\Entity\Document;
 use App\OpenAI\Client;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Console\Attribute\AsCommand;
@@ -44,33 +44,33 @@ class CrawlCommand extends Command
 
         $io->info('Removing data for this domain.');
 
-        $count = $this->entityManager->createQuery(sprintf('DELETE FROM %s s WHERE s.url LIKE :host', Section::class))
+        $count = $this->entityManager->createQuery(sprintf('DELETE FROM %s s WHERE s.url LIKE :host', Document::class))
             ->setParameter('host', "%s://{$host}%")
             ->execute()
         ;
 
         $this->entityManager->flush();
 
-        $io->note(sprintf('Removed %d sections.', $count));
+        $io->note(sprintf('Removed %d documents.', $count));
 
         $io->info('Crawling the website.');
 
-        $sections = $this->crawler->crawl($url);
+        $documents = $this->crawler->crawl($url);
 
-        $io->note(sprintf('Found %d sections.', \count($sections)));
+        $io->note(sprintf('Found %d documents.', \count($documents)));
 
         $io->info('Extracting embeddings.');
 
-        foreach ($sections as $section) {
-            $embeddings = $this->client->getEmbeddings($section->content);
+        foreach ($documents as $document) {
+            $embeddings = $this->client->getEmbeddings($document->content);
 
-            $section->setEmbeddings($embeddings);
+            $document->setEmbeddings($embeddings);
         }
 
         $io->info('Persisting data.');
 
-        foreach ($sections as $section) {
-            $this->entityManager->persist($section);
+        foreach ($documents as $document) {
+            $this->entityManager->persist($document);
         }
 
         $this->entityManager->flush();
