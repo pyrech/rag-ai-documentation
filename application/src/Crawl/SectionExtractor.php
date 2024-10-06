@@ -3,6 +3,7 @@
 namespace App\Crawl;
 
 use App\Entity\Section;
+use Symfony\Component\DomCrawler\Crawler as DomCrawler;
 
 class SectionExtractor
 {
@@ -11,42 +12,30 @@ class SectionExtractor
      */
     public function extract(string $url, string $html): array
     {
-        // All h1-h6 titles
-        $xPathTitles = implode(' | ', array_map(
-            fn (int $i): string => sprintf('//h%d[1]', $i),
-            range(1, 6)
-        ));
+        $crawler = new DomCrawler($html);
+        $crawler = $crawler->filter('h1, h2, h3, h4, h5, h6');
 
-        $dom = new \DOMDocument();
-        libxml_use_internal_errors(true);
-        $dom->loadHTML($html);
-        libxml_clear_errors();
+        // Iterate over the h1-h6 titles
+        foreach ($crawler as $node) {
+            $sectionUrl = $url;
 
-        $sections = [];
-
-        $xpath = new \DOMXPath($dom);
-        $nodes = $xpath->query($xPathTitles);
-
-        /** @var \DOMElement $node */
-        foreach ($nodes as $node) {
-            $documentUrl = $url;
-
-            if ($node->hasAttribute('id')) {
-                $documentUrl .= '#' . $node->getAttribute('id');
-            }
-            $content = '';
-            $contentNode = $node->nextSibling;
-
-            while ($contentNode && !$this->isTitle($contentNode)) {
-                $content .= $dom->saveHTML($contentNode);
-                $contentNode = $contentNode->nextSibling;
+            // Attach an anchor to the URL if title has an id
+            if ($node instanceof \DOMElement && $node->hasAttribute('id')) {
+                $sectionUrl .= '#' . $node->getAttribute('id');
             }
 
             $title = $this->cleanContent($node->textContent);
+            $content = '';
+            $contentNode = $node->nextSibling;
+
+            // Parse the content until the next title
+            while ($contentNode && !$this->isTitle($contentNode)) {
+                $content .= $contentNode->ownerDocument->saveHTML($contentNode);
+                $contentNode = $contentNode->nextSibling;
+            }
 
             $sections[] = new Section(
-                hash('xxh3', $url . $title),
-                $documentUrl,
+                $sectionUrl,
                 $title,
                 $this->cleanContent($content),
             );
