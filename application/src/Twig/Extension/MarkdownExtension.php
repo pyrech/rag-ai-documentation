@@ -16,12 +16,7 @@ class MarkdownExtension extends AbstractExtension
     public function getFilters(): array
     {
         return [
-            new TwigFilter('markdown', [$this, 'convertMarkdown'], ['is_safe' => ['html']]),
+            new TwigFilter('markdown', $this->markdownConverter->convert(...), ['is_safe' => ['html']]),
         ];
-    }
-
-    public function convertMarkdown(string $content): string
-    {
-        return $this->markdownConverter->convert($content);
     }
 }

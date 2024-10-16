@@ -13,9 +13,11 @@ class Document
     #[ORM\Id]
     #[ORM\GeneratedValue(strategy: 'NONE')]
     #[ORM\Column(type: 'guid', nullable: false)]
-    public string $id;
+    public readonly string $id;
+
     #[ORM\Column(type: 'integer')]
     public int $tokens;
+
     /** @var float[] */
     #[ORM\Column(type: 'vector', length: self::VECTOR_LENGTH)]
     public array $embeddings;
