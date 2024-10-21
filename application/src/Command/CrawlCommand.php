@@ -45,7 +45,7 @@ class CrawlCommand extends Command
         $io->info('Removing data for this domain.');
 
         $count = $this->entityManager->createQuery(sprintf('DELETE FROM %s s WHERE s.url LIKE :host', Document::class))
-            ->setParameter('host', "%s://{$host}%")
+            ->setParameter('host', "%://{$host}%")
             ->execute()
         ;
 

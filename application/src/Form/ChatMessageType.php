@@ -14,7 +14,7 @@ class ChatMessageType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder
-            ->add('input', TextType::class, [
+            ->add('userPrompt', TextType::class, [
                 'label' => 'Message',
                 'constraints' => [
                     new NotBlank(),

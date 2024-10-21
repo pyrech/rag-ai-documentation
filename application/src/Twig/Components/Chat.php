@@ -47,13 +47,13 @@ class Chat extends AbstractController
     {
         $this->submitForm();
 
-        $input = $this->getForm()->get('input')->getData();
+        $userPrompt = $this->getForm()->get('userPrompt')->getData();
 
-        $message = new Message($input, true);
+        $message = new Message($userPrompt, true);
         $this->entityManager->persist($message);
         $this->entityManager->flush();
 
-        $embeddings = $this->client->getEmbeddings($input);
+        $embeddings = $this->client->getEmbeddings($userPrompt);
         $documents = $this->documentRepository->findNearest($embeddings);
         $messages = $this->messageRepository->findLatest();
         $answer = $this->client->getAnswer($documents, $messages);
