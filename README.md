@@ -6,7 +6,7 @@ This project is a proof of concept of a RAG-based chatbot that can answer questi
 
 ## TLDR
 
-Create a [application/.env.local] and fill it with the following env vars:
+Create a `application/.env.local` file and fill it with the following env vars:
 - `OPENAI_API_KEY` with your OpenAI API key
 - `DOCUMENTATION_URL` with the URL of the website you want to crawl and analyze
 
