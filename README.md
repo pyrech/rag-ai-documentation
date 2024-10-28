@@ -4,6 +4,8 @@ This project is a proof of concept of a RAG-based chatbot that can answer questi
 
 ![Screenshot of the POC](assets/poc.png)
 
+This project has been created as a support for this blog post: https://jolicode.com/blog/construire-un-chatbot-specialise-sur-vos-donnees-grace-a-lia-generative-et-php
+
 ## TLDR
 
 Create a `application/.env.local` file and fill it with the following env vars:
